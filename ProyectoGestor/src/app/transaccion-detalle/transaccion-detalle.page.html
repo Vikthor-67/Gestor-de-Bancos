@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Detalle de Transaccion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card *ngIf="transaccion">
+    <ion-card-header>
+      <ion-card-title>{{ transaccion.nombreCliente }}</ion-card-title>
+      <ion-card-subtitle>Referencia: {{ transaccion.numeroReferencia || 'N/A' }}</ion-card-subtitle>
+      <ion-chip [color]="colorEstadoVisual()">
+        <ion-label>{{ estadoVisual() }}</ion-label>
+      </ion-chip>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-label>Monto</ion-label>
+        <ion-note slot="end">{{ formatMoney(transaccion.monto) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Comision</ion-label>
+        <ion-note slot="end">{{ formatMoney(transaccion.comision) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Fecha</ion-label>
+        <ion-note slot="end">{{ fechasLocal.formatearFechaHora(transaccion.fechaTransaccion) }}</ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Observacion</ion-label>
+        <ion-textarea [(ngModel)]="transaccion.observacion"></ion-textarea>
+      </ion-item>
+
+      <button
+        *ngIf="transaccion.fotoComprobante"
+        type="button"
+        class="foto-preview-btn"
+        (click)="abrirFoto()"
+      >
+        <img [src]="transaccion.fotoComprobante" alt="Comprobante" class="preview" />
+        <div class="preview-hint">Toca para ampliar</div>
+      </button>
+
+      <ion-button
+        *ngIf="esBorrador || esPendiente()"
+        expand="block"
+        color="success"
+        class="ion-margin-top"
+        (click)="aprobar()"
+      >
+        {{ esBorrador ? 'Aprobar y registrar' : 'Aprobar transaccion' }}
+      </ion-button>
+      <ion-button expand="block" class="ion-margin-top" (click)="guardarCambios()">
+        {{ esBorrador ? 'Guardar borrador' : 'Guardar cambios' }}
+      </ion-button>
+      <ion-button expand="block" color="danger" fill="outline" (click)="anular()" [disabled]="!esBorrador && esAnulada()">
+        {{ esBorrador ? 'Anular borrador' : 'Anular transaccion' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="foto-overlay" *ngIf="mostrarFotoAmpliada && transaccion?.fotoComprobante" (click)="cerrarFoto()">
+    <div class="foto-overlay-content" (click)="$event.stopPropagation()">
+      <ion-button fill="clear" class="cerrar-foto" (click)="cerrarFoto()">Cerrar</ion-button>
+      <img [src]="transaccion?.fotoComprobante" alt="Comprobante ampliado" class="foto-ampliada" />
+    </div>
+  </div>
+
+  <ion-card *ngIf="!loading && !transaccion">
+    <ion-card-content>No se encontro informacion de esta transaccion.</ion-card-content>
+  </ion-card>
+</ion-content>

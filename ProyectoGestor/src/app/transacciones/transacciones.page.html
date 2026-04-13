@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Transacciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Buscar cliente o referencia</ion-label>
+        <ion-input [(ngModel)]="filtros.busqueda" (ionInput)="aplicarBusquedaLocal()"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Cuenta destino</ion-label>
+        <ion-input [(ngModel)]="filtros.cuentaDestino" (ionInput)="aplicarBusquedaLocal()" placeholder="Filtrar por cuenta destino"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Banco</ion-label>
+        <ion-select [(ngModel)]="filtros.idBanco" interface="popover" placeholder="Todos los bancos">
+          <ion-select-option [value]="null">Todos</ion-select-option>
+          <ion-select-option *ngFor="let banco of bancos" [value]="banco.id">{{ banco.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Tipo de transaccion</ion-label>
+        <ion-select [(ngModel)]="filtros.idTipo" interface="popover" placeholder="Todos los tipos">
+          <ion-select-option [value]="null">Todos</ion-select-option>
+          <ion-select-option *ngFor="let tipo of tiposTransaccion" [value]="tipo.id">{{ tipo.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" (click)="cargarTransacciones()" [disabled]="loading">
+        Aplicar filtros
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-item *ngFor="let item of transaccionesFiltradas" [routerLink]="['/transaccion', item.id]">
+      <ion-label>
+        <h2 *ngIf="item.nombreCliente && item.nombreCliente.toLowerCase() !== 'cliente no especificado'">{{ item.nombreCliente }}</h2>
+        <p>Referencia: {{ item.numeroReferencia || 'N/A' }}</p>
+        <p>{{ item.banco || ('Banco #' + item.idBanco) }} · {{ item.tipo || ('Tipo #' + item.idTipoTrans) }}</p>
+        <p *ngIf="item.cuentaDestino">Cuenta destino: {{ item.cuentaDestino }}</p>
+        <p *ngIf="item.nombreUsuario">Cajero: {{ item.nombreUsuario }}</p>
+        <p>{{ fechasLocal.formatearFechaHora(item.fechaTransaccion) }}</p>
+      </ion-label>
+
+      <div slot="end" class="ion-text-right">
+        <ion-chip [color]="colorEstadoVisual(item)">
+          <ion-label>{{ estadoVisual(item) }}</ion-label>
+        </ion-chip>
+        <div>{{ formatMoney(item.monto) }}</div>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ion-card *ngIf="!loading && transaccionesFiltradas.length === 0">
+    <ion-card-content>No hay transacciones para mostrar.</ion-card-content>
+  </ion-card>
+</ion-content>

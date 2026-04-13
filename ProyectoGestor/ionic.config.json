@@ -1,0 +1,7 @@
+{
+  "name": "ProyectoGestor",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

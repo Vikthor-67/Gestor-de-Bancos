@@ -1,0 +1,111 @@
+ion-content {
+	--background: linear-gradient(135deg, #f5f6f7 0%, #f9fafb 100%);
+}
+
+ion-card {
+	border-radius: 16px;
+	box-shadow: 0 10px 25px rgba(11, 31, 58, 0.08);
+	overflow: hidden;
+	background: #ffffff;
+	animation: fadeIn 0.4s ease-out forwards;
+
+	ion-card-header {
+		background: linear-gradient(135deg, rgba(47, 95, 149, 0.08) 0%, rgba(74, 124, 184, 0.08) 100%);
+		border-bottom: 2px solid #e5e7eb;
+
+		ion-card-title {
+			color: #0b1f3a;
+			font-size: 22px;
+			font-weight: 700;
+		}
+
+		ion-card-subtitle {
+			color: #6b7280;
+			font-size: 13px;
+			font-weight: 500;
+			letter-spacing: 0.3px;
+			text-transform: uppercase;
+		}
+	}
+
+	ion-card-content ion-item {
+		--background: transparent;
+		border-bottom: 1px solid #e5e7eb;
+		padding: 14px 0;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		ion-label {
+			color: #0b1f3a;
+			font-weight: 600;
+		}
+
+		ion-note {
+			color: #0b1f3a;
+			font-weight: 800;
+			font-family: 'Courier New', monospace;
+		}
+	}
+}
+
+.rango-fechas {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+}
+
+.fecha-campo {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.fecha-campo ion-label {
+	font-weight: 600;
+	color: #6b7280;
+	text-transform: uppercase;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+}
+
+.fecha-btn {
+	--border-radius: 12px;
+	justify-content: flex-start;
+	min-height: 44px;
+	text-transform: none;
+	font-weight: 500;
+}
+
+ion-button[expand='block'] {
+	margin: 14px 0;
+}
+
+@media (min-width: 768px) {
+	.rango-fechas {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	ion-card {
+		margin: 10px 8px;
+		border-radius: 10px;
+
+		ion-card-header ion-card-title {
+			font-size: 20px;
+		}
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

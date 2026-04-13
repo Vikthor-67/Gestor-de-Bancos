@@ -1,0 +1,132 @@
+ion-card {
+	border-radius: 14px;
+	margin: 14px 12px;
+}
+
+.comisiones-lista {
+	display: grid;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.comision-card {
+	margin: 0;
+	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.comision-card ion-card-content {
+	padding: 14px;
+}
+
+.comision-header {
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 12px;
+}
+
+.comision-titulos h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.comision-titulos p {
+	margin: 4px 0 0;
+	font-size: 14px;
+	color: var(--app-text-muted, #6b7280);
+}
+
+.comision-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	justify-content: flex-end;
+}
+
+.comision-resumen {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	padding: 12px;
+	border: 1px solid var(--app-border, #e5e7eb);
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.comision-resumen > div {
+	min-width: 0;
+}
+
+.comision-resumen .etiqueta {
+	display: block;
+	margin-bottom: 4px;
+	font-size: 12px;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--app-text-muted, #6b7280);
+}
+
+.comision-resumen strong {
+	display: block;
+	font-size: 15px;
+	line-height: 1.25;
+	overflow-wrap: anywhere;
+}
+
+.comision-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.comision-actions ion-button {
+	flex: 1 1 0;
+	margin: 0;
+}
+
+@media (max-width: 768px) {
+	ion-card {
+		margin: 10px 8px;
+	}
+
+	ion-card-header,
+	ion-card-content {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.comision-header {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.comision-badges {
+		justify-content: flex-start;
+	}
+
+	.comision-resumen {
+		grid-template-columns: 1fr;
+	}
+
+	.comision-actions {
+		flex-direction: column;
+	}
+
+	.comision-actions ion-button {
+		width: 100%;
+		min-height: 44px;
+	}
+
+	.comision-titulos h2 {
+		font-size: 16px;
+	}
+
+	.comision-titulos p,
+	.comision-resumen .etiqueta,
+	.comision-resumen strong {
+		font-size: 14px;
+	}
+}

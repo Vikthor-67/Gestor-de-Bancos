@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Bancos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ editId ? 'Editar banco' : 'Nuevo banco' }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="form.nombre"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Codigo</ion-label>
+        <ion-input [(ngModel)]="form.codigo"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Telefono</ion-label>
+        <ion-input [(ngModel)]="form.telefono"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" (click)="guardar()">{{ editId ? 'Actualizar' : 'Crear' }}</ion-button>
+      <ion-button *ngIf="editId" expand="block" fill="outline" (click)="limpiar()">Cancelar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-item *ngFor="let item of bancos">
+      <ion-label>
+        <h2>{{ item.nombre }}</h2>
+        <p>{{ item.codigo }} · {{ item.telefono || 'Sin telefono' }}</p>
+      </ion-label>
+      <ion-button slot="end" fill="clear" (click)="editar(item)">Editar</ion-button>
+      <ion-button
+        slot="end"
+        fill="clear"
+        [color]="item.estado ? 'danger' : 'success'"
+        (click)="cambiarEstado(item)"
+      >
+        {{ item.estado ? 'Desactivar' : 'Activar' }}
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

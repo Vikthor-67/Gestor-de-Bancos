@@ -1,0 +1,68 @@
+// For information on how to create your own theme, please refer to:
+// https://ionicframework.com/docs/theming/
+
+// ========================================
+// TEMA ELEGANTE Y SOFISTICADO - GESTOR BANCARIO
+// ========================================
+
+// Colores principales (Azul profesional)
+$primary-blue: #0b1f3a;
+$primary-blue-medium: #153a65;
+$primary-blue-light: #2f5f95;
+$primary-blue-accent: #4a7cb8;
+
+// Colores complementarios
+$dark-bg: #0f1419;
+$light-text: #ffffff;
+$light-gray: #f5f6f7;
+$medium-gray: #d1d5db;
+$dark-gray: #374151;
+
+// Variables Ionic
+:root {
+	// Colores primarios
+	--ion-color-primary: #2f5f95;
+	--ion-color-primary-rgb: 47, 95, 149;
+	--ion-color-primary-contrast: #ffffff;
+	--ion-color-primary-contrast-rgb: 255, 255, 255;
+	--ion-color-primary-shade: #2850a8;
+	--ion-color-primary-tint: #4470a0;
+
+	// Colores secundarios
+	--ion-color-secondary: #4a7cb8;
+	--ion-color-secondary-rgb: 74, 124, 184;
+	--ion-color-secondary-contrast: #ffffff;
+	--ion-color-secondary-contrast-rgb: 255, 255, 255;
+	--ion-color-secondary-shade: #3d68a5;
+	--ion-color-secondary-tint: #5c8cbf;
+
+	// Colores de fondo
+	--ion-background-color: #f5f6f7;
+	--ion-background-color-rgb: 245, 246, 247;
+
+	// Colores de texto
+	--ion-text-color: #1f2937;
+	--ion-text-color-rgb: 31, 41, 55;
+
+	// Colores de bordes
+	--ion-border-color: #e5e7eb;
+
+	// Otros colores
+	--ion-color-success: #10b981;
+	--ion-color-warning: #f59e0b;
+	--ion-color-danger: #ef4444;
+	--ion-color-light: #f5f6f7;
+	--ion-color-medium: #6b7280;
+	--ion-color-dark: #1f2937;
+}
+
+// Dark mode (opcional)
+@media (prefers-color-scheme: dark) {
+	:root {
+		--ion-background-color: #0f1419;
+		--ion-background-color-rgb: 15, 20, 25;
+		--ion-text-color: #f5f6f7;
+		--ion-text-color-rgb: 245, 246, 247;
+		--ion-border-color: #2d3748;
+	}
+}

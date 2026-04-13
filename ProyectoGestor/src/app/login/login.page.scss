@@ -1,0 +1,70 @@
+.login-content {
+	--background: linear-gradient(140deg, #0b1f3a 0%, #153a65 55%, #2f5f95 100%);
+}
+
+.login-wrapper {
+	min-height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+ion-card {
+	width: min(420px, 100%);
+}
+
+.biometria-access {
+	margin-top: 14px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+}
+
+.biometria-icon-btn {
+	--background: transparent;
+	--background-hover: transparent;
+	--background-focused: transparent;
+	--background-activated: transparent;
+	--color: #a31426;
+	--border-radius: 50%;
+	--padding-start: 0;
+	--padding-end: 0;
+	width: 84px;
+	height: 84px;
+	margin: 0;
+	box-shadow: none;
+	border: 0;
+
+	ion-icon {
+		font-size: 52px;
+		color: currentColor;
+		opacity: 1;
+	}
+
+	&.biometria-icon-btn--active {
+		--color: #c4cedb;
+	}
+
+	&.biometria-icon-btn--inactive {
+		--color: #b11228;
+	}
+
+	&[disabled] {
+		--background: transparent;
+		box-shadow: none;
+		border: 0;
+		opacity: 1;
+	}
+}
+
+.biometria-label {
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+	color: #0f172a;
+	opacity: 1;
+}

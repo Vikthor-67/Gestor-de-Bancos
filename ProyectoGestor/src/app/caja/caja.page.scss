@@ -1,0 +1,158 @@
+ion-content {
+	--background: linear-gradient(135deg, #f5f6f7 0%, #f9fafb 100%);
+}
+
+.estado-caja-wrap {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 4px;
+}
+
+ion-card {
+	border-radius: 16px;
+	box-shadow: 0 10px 25px rgba(11, 31, 58, 0.08);
+	overflow: hidden;
+	background: #ffffff;
+	animation: fadeIn 0.4s ease-out forwards;
+
+	ion-card-header {
+		background: linear-gradient(135deg, rgba(47, 95, 149, 0.08) 0%, rgba(74, 124, 184, 0.08) 100%);
+		border-bottom: 2px solid #e5e7eb;
+
+		ion-card-subtitle {
+			color: #6b7280;
+			font-size: 13px;
+			font-weight: 500;
+			letter-spacing: 0.3px;
+			text-transform: uppercase;
+		}
+
+		ion-card-title {
+			color: #0b1f3a;
+			font-size: 22px;
+			font-weight: 700;
+		}
+	}
+
+	ion-card-content ion-item {
+		--background: transparent;
+		border-bottom: 1px solid #e5e7eb;
+		padding: 14px 0;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		ion-label {
+			color: #0b1f3a;
+			font-weight: 600;
+		}
+
+		ion-note {
+			color: #0b1f3a;
+			font-weight: 800;
+			font-family: 'Courier New', monospace;
+		}
+	}
+}
+
+ion-button[expand='block'] {
+	margin: 14px 0;
+}
+
+.reglas-caja-legend {
+	margin: 12px 0 16px;
+	padding: 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	background: #f9fafb;
+}
+
+.legend-toggle {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+	border: 0;
+	background: transparent;
+	padding: 0;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 700;
+	color: #0b1f3a;
+}
+
+.legend-content {
+	margin-top: 10px;
+}
+
+.legend-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.legend-badge {
+	padding: 4px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.legend-row-positive .legend-badge {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+}
+
+.legend-row-negative .legend-badge {
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
+}
+
+ion-chip {
+	font-weight: 600;
+
+	&[color='success'] {
+		--background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+		--color: #10b981;
+	}
+
+	&[color='danger'] {
+		--background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+		--color: #ef4444;
+	}
+
+	&[color='medium'] {
+		--background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(107, 114, 128, 0.05) 100%);
+		--color: #6b7280;
+	}
+}
+
+@media (max-width: 768px) {
+	ion-card {
+		margin: 10px 8px;
+		border-radius: 10px;
+
+		ion-card-header ion-card-title {
+			font-size: 20px;
+		}
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

@@ -1,0 +1,316 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Control de Caja</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="estado-caja-wrap ion-padding-horizontal ion-padding-top">
+    <ion-chip [color]="caja ? (saldoActual < 20000 ? 'danger' : 'success') : 'medium'" outline="true">
+      <ion-label>
+        {{ caja ? ('Caja abierta - Monto general: ' + formatMoney(saldoActual)) : 'Caja cerrada' }}
+      </ion-label>
+    </ion-chip>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Acciones globales</ion-card-title>
+      <ion-card-subtitle>Operar todas las cajas a la vez</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" color="primary" (click)="abrirTodasCajas()" [disabled]="loading || !puedeAbrirCaja">
+        Abrir todas las cajas
+      </ion-button>
+      <ion-note color="danger" *ngIf="!caja && !puedeAbrirCaja">
+        Debes ingresar el efectivo inicial (mayor a 0) y configurar el saldo de cada banco para poder abrir caja.
+      </ion-note>
+      <ion-button expand="block" color="danger" class="ion-margin-top" (click)="cerrarTodasCajas()" [disabled]="loading">
+        Cerrar todas las cajas
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!caja">
+    <ion-card-header>
+      <ion-card-title>Abrir caja</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Saldo de efectivo inicial del dia *</ion-label>
+        <ion-input
+          type="text"
+          inputmode="decimal"
+          min="0"
+          step="0.01"
+          [ngModel]="efectivoInicial"
+          (ngModelChange)="onCambiarEfectivoInicial($event)"
+          appMoneyInput
+        ></ion-input>
+      </ion-item>
+
+      <ion-item-divider>
+        <ion-label>Saldos iniciales por banco activo</ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let banco of bancosActivos">
+        <ion-label position="stacked">{{ banco.nombre }}</ion-label>
+        <ion-input
+          type="text"
+          inputmode="decimal"
+          min="0"
+          step="0.01"
+          [ngModel]="saldosInicialesBanco[banco.id]"
+          (ngModelChange)="onCambiarSaldoBanco(banco.id, $event)"
+          appMoneyInput
+        ></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label>Total inicial de apertura</ion-label>
+        <ion-note slot="end">{{ formatMoney(saldoInicialTotal) }}</ion-note>
+      </ion-item>
+
+      <ion-note color="medium">
+        Configura el efectivo y los saldos iniciales por banco para iniciar el dia.
+      </ion-note>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="caja">
+    <ion-card-header>
+      <ion-card-title>Estado: {{ caja.estado }}</ion-card-title>
+      <ion-card-subtitle>Fecha: {{ fechasLocal.formatearFechaHora(caja.fecha) }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-label>Saldo inicial</ion-label>
+        <ion-note slot="end">{{ formatMoney(caja.saldoInicial) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Ingresos</ion-label>
+        <ion-note slot="end">{{ formatMoney(caja.totalIngresos) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Egresos</ion-label>
+        <ion-note slot="end">{{ formatMoney(caja.totalEgresos) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Monto general</ion-label>
+        <ion-note slot="end">{{ formatMoney(montoGeneralCalculado) }}</ion-note>
+      </ion-item>
+
+      <ion-note color="medium" *ngIf="resumenOperativo">
+        Monto general = Efectivo actual + Suma actual de bancos.
+      </ion-note>
+
+      <ion-item lines="none" *ngIf="resumenOperativo">
+        <ion-label>Efectivo actual</ion-label>
+        <ion-note slot="end">{{ formatMoney(resumenOperativo.efectivoActual) }}</ion-note>
+      </ion-item>
+
+      <ion-item lines="none" *ngIf="resumenOperativo">
+        <ion-label>Monto bancos actual</ion-label>
+        <ion-note slot="end">{{ formatMoney(resumenOperativo.montoBancosActual) }}</ion-note>
+      </ion-item>
+
+      <div class="reglas-caja-legend" *ngIf="resumenOperativo">
+        <button type="button" class="legend-toggle" (click)="toggleReglas()" aria-label="Mostrar reglas">
+          <span>Reglas de movimiento</span>
+          <span>{{ reglasExpandida ? 'Ocultar' : 'Ver' }}</span>
+        </button>
+
+        <div class="legend-content" *ngIf="reglasExpandida">
+          <div class="legend-row legend-row-positive">
+            <span class="legend-badge">Deposito / Servicio</span>
+            <span>Efectivo sube | Banco baja</span>
+          </div>
+          <div class="legend-row legend-row-negative">
+            <span class="legend-badge">Retiro / Remesa</span>
+            <span>Efectivo baja | Banco sube</span>
+          </div>
+        </div>
+      </div>
+
+      <ion-item-divider>
+        <ion-label>Saldos actuales por banco</ion-label>
+      </ion-item-divider>
+
+      <ion-list *ngIf="saldosActualesPorBanco.length > 0">
+        <ion-item *ngFor="let item of saldosActualesPorBanco">
+          <ion-label>
+            <h2>{{ item.banco }}</h2>
+            <p>
+              Inicial: {{ formatMoney(item.saldoInicialBanco) }} |
+              Ingresos: {{ formatMoney(item.totalIngresosBanco) }} |
+              Egresos: {{ formatMoney(item.totalEgresosBanco) }}
+            </p>
+          </ion-label>
+          <ion-note slot="end">{{ formatMoney(item.saldoActualBanco) }}</ion-note>
+        </ion-item>
+      </ion-list>
+
+      <ion-text color="medium" *ngIf="saldosActualesPorBanco.length === 0">
+        No hay saldos por banco para mostrar en este momento.
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked">Monto contado de cierre *</ion-label>
+        <ion-input
+          type="text"
+          inputmode="decimal"
+          placeholder="0.00"
+          [ngModel]="montoCierre"
+          (ngModelChange)="onMontoCierreChange($event)"
+          appMoneyInput
+        ></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" *ngIf="montoCierre !== null">
+        <ion-label>Diferencia</ion-label>
+        <ion-note slot="end">{{ formatMoney(diferenciaCierre) }}</ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Observacion de cierre</ion-label>
+        <ion-textarea [(ngModel)]="observacionCierre"></ion-textarea>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        color="danger"
+        class="ion-margin-top"
+        (click)="cerrarCaja()"
+        [disabled]="!puedeCerrarCaja"
+      >
+        Cerrar caja
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Ingreso de Capital / Gastos -->
+  <ion-card *ngIf="caja">
+    <ion-card-header>
+      <ion-card-title>Ingreso de Capital / Gastos</ion-card-title>
+      <ion-card-subtitle>Registra ingresos o gastos que afectan el monto general</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="stacked">Tipo</ion-label>
+        <ion-select [(ngModel)]="movCapitalForm.tipo" interface="popover">
+          <ion-select-option value="ingreso">Ingreso de Capital</ion-select-option>
+          <ion-select-option value="egreso">Gastos</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Monto</ion-label>
+        <ion-input
+          type="text"
+          inputmode="decimal"
+          placeholder="0.00"
+          [ngModel]="movCapitalForm.monto"
+          (ngModelChange)="movCapitalForm.monto = $event"
+          appMoneyInput
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Concepto</ion-label>
+        <ion-input
+          [(ngModel)]="movCapitalForm.concepto"
+          [placeholder]="movCapitalForm.tipo === 'ingreso' ? 'Describe el ingreso de capital' : 'Describe el gasto'"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Modalidad</ion-label>
+        <ion-select [(ngModel)]="movCapitalForm.modalidad" interface="popover">
+          <ion-select-option value="efectivo">Efectivo</ion-select-option>
+          <ion-select-option value="banco">Banco</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="movCapitalForm.modalidad === 'banco'">
+        <ion-label position="stacked">Banco</ion-label>
+        <ion-select [(ngModel)]="movCapitalForm.idBanco" interface="popover" placeholder="Seleccione un banco">
+          <ion-select-option *ngFor="let b of bancosActivos" [value]="b.id">{{ b.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        class="ion-margin-top"
+        [color]="movCapitalForm.tipo === 'ingreso' ? 'success' : 'warning'"
+        (click)="registrarMovimientoCapital()"
+        [disabled]="savingMovCapital"
+      >
+        <ion-spinner *ngIf="savingMovCapital" name="crescent" slot="start"></ion-spinner>
+        {{ movCapitalForm.tipo === 'ingreso' ? 'Registrar Ingreso de Capital' : 'Registrar Gasto' }}
+      </ion-button>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Historial de ingresos de capital y gastos -->
+  <ion-card *ngIf="caja">
+    <ion-card-header>
+      <ion-card-title>Ingresos de Capital y Gastos del dia</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-segment [(ngModel)]="filtroMovCapital" (ionChange)="cargarMovimientosCapital()">
+        <ion-segment-button value="">
+          <ion-label>Todos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="ingreso">
+          <ion-label>Ingresos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="egreso">
+          <ion-label>Gastos</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <div class="ion-text-center ion-padding" *ngIf="loadingMovCapital">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <ion-list *ngIf="!loadingMovCapital">
+        <ion-item *ngIf="movimientosCapital.length === 0" lines="none">
+          <ion-label color="medium" class="ion-text-center">Sin registros para este filtro.</ion-label>
+        </ion-item>
+
+        <ion-item *ngFor="let m of movimientosCapital" lines="full">
+          <ion-icon
+            slot="start"
+            [name]="m.tipo === 'ingreso' ? 'trending-up' : 'trending-down'"
+            [color]="m.tipo === 'ingreso' ? 'success' : 'warning'">
+          </ion-icon>
+          <ion-label>
+            <h3>
+              <strong [style.color]="m.tipo === 'ingreso' ? 'var(--ion-color-success)' : 'var(--ion-color-warning)'">
+                {{ m.tipo === 'ingreso' ? 'Ingreso de Capital' : 'Gasto' }}
+              </strong>
+              &nbsp;·&nbsp;
+              <span>{{ m.modalidad === 'banco' ? (m.nombreBanco || 'Banco') : 'Efectivo' }}</span>
+            </h3>
+            <p *ngIf="m.concepto">{{ m.concepto }}</p>
+            <p><small>{{ fechasLocal.formatearHora(m.fechaRegistro) }}</small></p>
+          </ion-label>
+          <ion-note slot="end" [color]="m.tipo === 'ingreso' ? 'success' : 'warning'">
+            {{ formatMoney(m.monto) }}
+          </ion-note>
+          <ion-button slot="end" fill="clear" color="danger" (click)="eliminarMovimientoCapital(m)" title="Eliminar">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

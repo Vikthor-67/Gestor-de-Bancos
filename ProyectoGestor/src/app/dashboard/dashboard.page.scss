@@ -1,0 +1,726 @@
+// ==============================
+// Dashboard — Professional Style
+// ==============================
+
+ion-content {
+  --background: #f1f5f9;
+}
+
+// ---- KPI Cards ----
+
+.kpi-grid {
+  padding: 8px 4px 0;
+}
+
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: 14px;
+  padding: 18px 16px;
+  margin: 6px 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  border-left: 5px solid;
+  min-height: 88px;
+
+  .kpi-icon {
+    font-size: 28px;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+
+  .kpi-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+
+  .kpi-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.kpi-blue  { border-color: #3b82f6; .kpi-icon { color: #3b82f6; } }
+  &.kpi-green { border-color: #10b981; .kpi-icon { color: #10b981; } }
+  &.kpi-purple{ border-color: #8b5cf6; .kpi-icon { color: #8b5cf6; } }
+  &.kpi-teal  { border-color: #06b6d4; .kpi-icon { color: #06b6d4; } }
+  &.kpi-orange{ border-color: #f97316; .kpi-icon { color: #f97316; } }
+  &.kpi-indigo{ border-color: #6366f1; .kpi-icon { color: #6366f1; } }
+}
+
+// ---- Section cards ----
+
+.section-card {
+  margin: 10px 8px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.07);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.card-header-accent {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 16px 12px;
+
+  ion-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  ion-card-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+}
+
+.card-title-icon {
+  font-size: 18px;
+  color: #3b82f6;
+}
+
+// ---- Saldos ----
+
+.saldo-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+  margin: 4px 2px;
+
+  .saldo-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+  }
+
+  .saldo-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    font-family: 'Courier New', monospace;
+  }
+
+  &.saldo-metric--highlight { background: #eff6ff; }
+  &.saldo-metric--success   { background: #f0fdf4; .saldo-label { color: #16a34a; } }
+  &.saldo-metric--danger    { background: #fff1f2; .saldo-label { color: #dc2626; } }
+}
+
+.saldo-val--success { color: #16a34a !important; }
+.saldo-val--danger  { color: #dc2626 !important; }
+
+// ---- Filtros ----
+
+.filter-item {
+  --background: #f8fafc;
+  --border-radius: 8px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  border-radius: 8px;
+  margin: 4px 2px;
+
+  ion-label {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+}
+
+.btn-apply {
+  --background: #3b82f6;
+  --background-hover: #2563eb;
+  --border-radius: 10px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+
+// ---- Banco list ----
+
+.banco-list {
+  margin-top: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.banco-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 12px;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover { background: #f8fafc; }
+}
+
+.banco-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.banco-nombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.banco-tipo {
+  font-size: 11px;
+  background: #eff6ff;
+  color: #3b82f6;
+  border-radius: 4px;
+  padding: 1px 6px;
+  width: fit-content;
+  font-weight: 600;
+}
+
+.banco-trans {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.banco-amounts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.banco-monto {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: 'Courier New', monospace;
+}
+
+.banco-comis {
+  font-size: 11px;
+  color: #64748b;
+}
+
+// ---- Gráfica circular ----
+
+.pie-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.pie-chart-wrap {
+  flex-shrink: 0;
+}
+
+.pie-chart {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.pie-center {
+  width: 90px;
+  height: 90px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
+
+  strong {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  small {
+    font-size: 10px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.pie-legend {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.legend-tipo {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.legend-txn {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.legend-monto {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+}
+
+// ---- Section title ----
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+  padding: 16px 14px 4px;
+
+  ion-icon {
+    font-size: 20px;
+    color: #3b82f6;
+  }
+}
+
+// ---- Activity cards ----
+
+.activity-card {
+  margin: 6px 4px;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  background: #fff;
+  overflow: hidden;
+  border-top: 4px solid;
+
+  &.ac-blue   { border-color: #3b82f6; }
+  &.ac-green  { border-color: #10b981; }
+  &.ac-purple { border-color: #8b5cf6; }
+  &.ac-amber  { border-color: #f59e0b; }
+  &.ac-red    { border-color: #ef4444; }
+}
+
+.ac-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 10px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  span { flex: 1; }
+
+  ion-badge {
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 8px;
+  }
+}
+
+.anuladas-summary {
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #64748b;
+  border-bottom: 1px solid #fee2e2;
+  background: #fff5f5;
+
+  strong {
+    color: #dc2626;
+  }
+}
+
+.ac-list {
+  padding: 4px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.ac-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 14px;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover { background: #f8fafc; }
+}
+
+.ac-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ac-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  flex: 1;
+}
+
+.ac-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ac-badge-red {
+  background: #ef4444 !important;
+}
+
+.ac-date {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.ac-empty {
+  padding: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+// ---- Historial de cajas ----
+
+.no-pad {
+  padding: 0 !important;
+}
+
+.caja-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f8fafc; }
+}
+
+.caja-num {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.caja-data {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.caja-cajero {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.caja-dates,
+.caja-detail {
+  font-size: 11px;
+  color: #64748b;
+  white-space: normal;
+}
+
+.caja-saldo {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// ---- No data ----
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 32px;
+    opacity: 0.5;
+  }
+}
+
+ion-card.section-card {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+ion-card.section-card ion-card-header,
+ion-card.section-card ion-card-content,
+ion-card.section-card .card-header-accent,
+ion-card.section-card .ac-header,
+ion-card.section-card .no-pad {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+ion-card.section-card .card-header-accent ion-card-title,
+ion-card.section-card .card-header-accent ion-card-subtitle,
+ion-card.section-card .section-title,
+ion-card.section-card .filter-item ion-label,
+ion-card.section-card .kpi-label,
+ion-card.section-card .kpi-sub,
+ion-card.section-card .banco-trans,
+ion-card.section-card .banco-comis,
+ion-card.section-card .legend-txn,
+ion-card.section-card .ac-date,
+ion-card.section-card .ac-empty,
+ion-card.section-card .caja-dates,
+ion-card.section-card .caja-detail,
+ion-card.section-card .no-data {
+  color: #64748b !important;
+}
+
+ion-card.section-card .card-header-accent ion-card-title,
+ion-card.section-card .section-title,
+ion-card.section-card .banco-nombre,
+ion-card.section-card .legend-tipo,
+ion-card.section-card .legend-monto,
+ion-card.section-card .ac-name,
+ion-card.section-card .caja-cajero,
+ion-card.section-card .caja-saldo,
+ion-card.section-card .kpi-value {
+  color: #0f172a !important;
+}
+
+ion-card.section-card ion-item.filter-item {
+  --background: #ffffff !important;
+  --color: #0f172a !important;
+  --border-color: #dbe5f0 !important;
+  color: #0f172a !important;
+}
+
+ion-card.section-card ion-select,
+ion-card.section-card ion-input {
+  --color: #0f172a !important;
+  --placeholder-color: #94a3b8 !important;
+  --placeholder-opacity: 1 !important;
+}
+
+ion-card.section-card .filter-item ion-select::part(text),
+ion-card.section-card .filter-item ion-select::part(placeholder),
+ion-card.section-card .filter-item ion-input::part(native) {
+  color: #0f172a !important;
+  opacity: 1 !important;
+}
+
+/* ====== Ajuste visual: usar colores base como el resto de pantallas ====== */
+:host {
+  --dash-bg: var(--ion-background-color, #f5f7fb);
+  --dash-surface: var(--ion-card-background, #ffffff);
+  --dash-text: var(--ion-text-color, #0f172a);
+  --dash-muted: var(--ion-color-medium, #64748b);
+  --dash-border: rgba(100, 116, 139, 0.28);
+}
+
+ion-content {
+  --background: var(--dash-bg) !important;
+}
+
+.kpi-card,
+.section-card,
+.activity-card,
+.saldo-metric,
+.filter-item,
+.banco-list,
+.pie-center {
+  background: var(--dash-surface) !important;
+}
+
+.card-header-accent,
+.ac-header {
+  background: var(--dash-surface) !important;
+  border-bottom-color: var(--dash-border) !important;
+}
+
+.banco-row,
+.ac-item,
+.caja-row {
+  border-bottom-color: var(--dash-border) !important;
+}
+
+.kpi-value,
+.banco-nombre,
+.legend-tipo,
+.legend-monto,
+.ac-name,
+.caja-cajero,
+.caja-saldo,
+.section-title,
+.card-header-accent ion-card-title {
+  color: var(--dash-text) !important;
+}
+
+.kpi-label,
+.kpi-sub,
+.banco-trans,
+.banco-comis,
+.legend-txn,
+.ac-date,
+.ac-empty,
+.caja-dates,
+.caja-detail,
+.no-data,
+.card-header-accent ion-card-subtitle,
+.filter-item ion-label {
+  color: var(--dash-muted) !important;
+}
+
+.pie-layout {
+  width: 100%;
+}
+
+.pie-legend {
+  min-width: 0;
+}
+
+.legend-item {
+  width: 100%;
+}
+
+.legend-info {
+  min-width: 0;
+}
+
+.legend-tipo,
+.legend-txn {
+  line-height: 1.25;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+.legend-monto {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .pie-layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .pie-chart-wrap {
+    align-self: center;
+  }
+
+  .pie-legend {
+    width: 100%;
+  }
+
+  .legend-item {
+    align-items: flex-start;
+  }
+
+  .legend-monto {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+}
+

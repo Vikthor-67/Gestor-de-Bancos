@@ -1,0 +1,36 @@
+<ion-app>
+  <div class="global-user-chip" *ngIf="usuarioActual as usuario">
+    {{ usuario.nombre }} ({{ usuario.rol }})
+  </div>
+  <ion-split-pane contentId="main-content" when="false">
+    <ion-menu contentId="main-content" type="overlay" side="start">
+      <ion-content>
+        <ion-list id="inbox-list">
+          <ion-list-header>Gestor Bancario</ion-list-header>
+          <ion-note>Investiones Santiago</ion-note>
+
+          @for (p of appPages; track p.url; let i = $index) {
+            <ion-menu-toggle auto-hide="false">
+              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          }
+
+          <ion-item
+            *ngIf="sesionActiva"
+            button
+            lines="none"
+            color="danger"
+            (click)="cerrarSesion()"
+          >
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Cerrar sesion</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

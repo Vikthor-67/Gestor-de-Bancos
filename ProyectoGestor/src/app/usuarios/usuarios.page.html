@@ -1,0 +1,151 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ esCajero ? 'Usuario' : 'Administracion de usuarios' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="usuarios-content">
+  <ion-card class="usuarios-card" *ngIf="esAdmin">
+    <ion-card-header>
+      <ion-card-title>Crear usuario</ion-card-title>
+      <ion-card-subtitle>Solo administradores pueden crear cuentas.</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="formUsuario.nombre" placeholder="Nombre completo"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Correo</ion-label>
+        <ion-input type="email" [(ngModel)]="formUsuario.correo" placeholder="nuevo.usuario@gestor.hn"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Rol</ion-label>
+        <ion-select [(ngModel)]="formUsuario.rol" interface="popover">
+          <ion-select-option value="cajero">Cajero</ion-select-option>
+          <ion-select-option value="admin">Administrador</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" [disabled]="loading" (click)="crearUsuario()">
+        Crear usuario
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="usuarios-card" *ngIf="esAdmin">
+    <ion-card-header>
+      <ion-card-title>Usuarios registrados</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="usuarios-lista">
+        <div *ngFor="let usuario of usuarios" class="usuario-card-item">
+          <div class="usuario-info">
+            <h2>{{ usuario.nombre }} - {{ usuario.rol }}</h2>
+            <p>{{ usuario.correo }}</p>
+            <p *ngIf="usuario.lockUntil">Bloqueado hasta: {{ fechasLocal.formatearFechaHora(usuario.lockUntil) }}</p>
+          </div>
+          <div class="usuario-actions">
+            <ion-chip color="warning" *ngIf="usuario.mustChangePassword">
+              <ion-label>Cambio pendiente</ion-label>
+            </ion-chip>
+            <ion-button fill="outline" color="primary" (click)="resetearPassword(usuario)">
+              Generar nueva clave
+            </ion-button>
+            <ion-button fill="outline" color="primary" (click)="actualizarCorreo(usuario)">
+              Actualizar correo
+            </ion-button>
+          </div>
+        </div>
+      </div>
+      <ion-text color="medium" *ngIf="usuarios.length === 0">
+        No hay usuarios para mostrar.
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="usuarios-card">
+    <ion-card-header>
+      <ion-card-title>Huella tactil</ion-card-title>
+      <ion-card-subtitle>Configura si deseas usar huella para iniciar sesion con tu cuenta actual.</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-label>
+          <h3>Usuario actual: {{ correoUsuarioActual || 'Sin sesion' }}</h3>
+          <p *ngIf="biometriaActiva">Huella vinculada a: {{ correoHuellaVinculado }}</p>
+          <p *ngIf="!biometriaActiva">No hay huella vinculada en este dispositivo.</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        [color]="huellaLigadaAlUsuarioActual ? 'danger' : 'primary'"
+        [disabled]="!biometriaDisponible"
+        (click)="alternarHuella()"
+      >
+        {{ huellaLigadaAlUsuarioActual ? 'Desactivar huella' : 'Activar huella' }}
+      </ion-button>
+
+      <ion-text color="medium" *ngIf="!biometriaDisponible">
+        Este dispositivo no soporta biometria o no esta disponible en este momento.
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="usuarios-card" *ngIf="esAdmin">
+    <ion-card-header>
+      <ion-card-title>Parametros de seguridad</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Longitud minima</ion-label>
+        <ion-input type="number" [(ngModel)]="parametros.minLength"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Longitud password temporal</ion-label>
+        <ion-input type="number" [(ngModel)]="parametros.defaultPasswordLength"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Intentos fallidos maximos</ion-label>
+        <ion-input type="number" [(ngModel)]="parametros.maxFailedAttempts"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Minutos de bloqueo</ion-label>
+        <ion-input type="number" [(ngModel)]="parametros.lockMinutes"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-checkbox slot="start" [(ngModel)]="parametros.requireUppercase"></ion-checkbox>
+        <ion-label>Requerir mayusculas</ion-label>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-checkbox slot="start" [(ngModel)]="parametros.requireLowercase"></ion-checkbox>
+        <ion-label>Requerir minusculas</ion-label>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-checkbox slot="start" [(ngModel)]="parametros.requireNumber"></ion-checkbox>
+        <ion-label>Requerir numeros</ion-label>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-checkbox slot="start" [(ngModel)]="parametros.requireSpecial"></ion-checkbox>
+        <ion-label>Requerir caracteres especiales</ion-label>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" [disabled]="loading" (click)="guardarParametros()">
+        Guardar parametros
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

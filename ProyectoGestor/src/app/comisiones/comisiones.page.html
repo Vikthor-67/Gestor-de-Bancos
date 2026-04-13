@@ -1,0 +1,187 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Comisiones</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="vistaActiva" (ionChange)="cambiarVista($event)">
+      <ion-segment-button value="configuracion">
+        <ion-label>Configuracion</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="reporte">
+        <ion-label>Reporte</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- =================== VISTA CONFIGURACION =================== -->
+  <ng-container *ngIf="vistaActiva === 'configuracion'">
+
+  <ion-card id="form-comision" class="config-card">
+    <ion-card-header>
+      <ion-card-title>Configuracion de comisiones</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Banco</ion-label>
+        <ion-select [(ngModel)]="form.idBanco" interface="popover" (ionChange)="onCampoClaveChange()">
+          <ion-select-option [value]="null">Todos los bancos</ion-select-option>
+          <ion-select-option *ngFor="let banco of bancos" [value]="banco.id">{{ banco.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Tipo de transaccion</ion-label>
+        <ion-select [(ngModel)]="form.idTipoTrans" interface="popover" (ionChange)="onCampoClaveChange()">
+          <ion-select-option [value]="null">Todos los tipos</ion-select-option>
+          <ion-select-option *ngFor="let tipo of tiposTransaccion" [value]="tipo.id">{{ tipo.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Comision fija</ion-label>
+        <ion-input
+          type="text"
+          inputmode="decimal"
+          min="0"
+          step="0.01"
+          [ngModel]="form.comisionFija"
+          (ngModelChange)="onComisionFijaChange($event)"
+          appMoneyInput
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Comision porcentaje</ion-label>
+        <ion-input type="number" min="0" step="0.0001" [ngModel]="form.comisionPorcentaje" (ngModelChange)="onComisionPorcentajeChange($event)"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Regla por defecto</ion-label>
+        <ion-toggle [(ngModel)]="form.esDefault" (ionChange)="onToggleChange()"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Activa</ion-label>
+        <ion-toggle [(ngModel)]="form.estado" (ionChange)="onToggleChange()"></ion-toggle>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" (click)="guardar()">Guardar regla</ion-button>
+      <ion-button expand="block" fill="outline" (click)="limpiar()">Limpiar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="comisiones-lista">
+    <ion-card class="comision-card" *ngFor="let item of comisiones">
+      <ion-card-content>
+        <div class="comision-header">
+          <div class="comision-titulos">
+            <h2>{{ item.banco }}</h2>
+            <p>{{ item.tipoTransaccion }}</p>
+          </div>
+          <div class="comision-badges">
+            <ion-chip [color]="item.estado ? 'success' : 'medium'">
+              <ion-label>{{ item.estado ? 'Activa' : 'Inactiva' }}</ion-label>
+            </ion-chip>
+            <ion-chip [color]="item.esDefault ? 'warning' : 'tertiary'">
+              <ion-label>{{ item.esDefault ? 'Default' : 'Especifica' }}</ion-label>
+            </ion-chip>
+          </div>
+        </div>
+
+        <div class="comision-resumen">
+          <div>
+            <span class="etiqueta">Comisión fija</span>
+            <strong>{{ formatMoney(item.comisionFija) }}</strong>
+          </div>
+          <div>
+            <span class="etiqueta">Porcentaje</span>
+            <strong>{{ item.comisionPorcentaje }}%</strong>
+          </div>
+        </div>
+
+        <div class="comision-actions">
+          <ion-button fill="outline" color="primary" (click)="editar(item)">Editar</ion-button>
+          <ion-button fill="outline" [color]="item.estado ? 'danger' : 'success'" (click)="toggleEstado(item)">
+            {{ item.estado ? 'Desactivar' : 'Activar' }}
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  </ng-container>
+  <!-- =================== FIN CONFIGURACION =================== -->
+
+  <!-- =================== VISTA REPORTE =================== -->
+  <ng-container *ngIf="vistaActiva === 'reporte'">
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Reporte de comisiones</ion-card-title>
+        <ion-card-subtitle>Fecha del dispositivo: {{ fechasLocal.formatearFecha(fechasLocal.fechaHoyISO()) }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Mes</ion-label>
+          <ion-input type="month" [(ngModel)]="mesFiltro"></ion-input>
+        </ion-item>
+        <ion-button expand="block" class="ion-margin-top" (click)="cargarReporte()">
+          <ion-icon name="search-outline" slot="start"></ion-icon>
+          Consultar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="loadingReporte" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <ng-container *ngIf="!loadingReporte && reporte">
+      <ion-card color="success">
+        <ion-card-content>
+          <div class="ion-text-center">
+            <p style="margin:0; font-size:0.85rem; opacity:0.85">Total acumulado {{ reporte.mes }}</p>
+            <h2 style="margin:4px 0 0; font-size:1.6rem; font-weight:700">{{ formatMoney(reporte.totalMes) }}</h2>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card *ngIf="reporte.dias.length === 0">
+        <ion-card-content>No hay transacciones con comision en este mes.</ion-card-content>
+      </ion-card>
+
+      <ion-card *ngIf="reporte.dias.length > 0">
+        <ion-card-header>
+          <ion-card-subtitle>Detalle por dia</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content style="padding: 0">
+          <ion-list lines="full">
+            <ion-item *ngFor="let dia of reporte.dias">
+              <ion-label>
+                <h3>{{ fechasLocal.formatearFecha(dia.fecha) }}</h3>
+                <p>{{ dia.numTransacciones }} transacciones</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <div style="font-weight:600; color: var(--ion-color-success)">
+                  {{ formatMoney(dia.totalComisiones) }}
+                </div>
+                <div style="font-size:0.78rem; opacity:0.7">
+                  Acum: {{ formatMoney(dia.acumuladoMes) }}
+                </div>
+              </div>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+  </ng-container>
+  <!-- =================== FIN REPORTE =================== -->
+
+</ion-content>

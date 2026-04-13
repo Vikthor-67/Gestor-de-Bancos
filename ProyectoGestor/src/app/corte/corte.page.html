@@ -1,0 +1,146 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Corte de Caja</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Filtrar cierre por banco</ion-label>
+        <ion-select [(ngModel)]="filtroBancoId" interface="popover" placeholder="Todos los bancos">
+          <ion-select-option [value]="null">Todos los bancos</ion-select-option>
+          <ion-select-option *ngFor="let banco of bancos" [value]="banco.id">{{ banco.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" (click)="aplicarFiltroBanco()" [disabled]="loading">
+        Filtrar
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="limpiarFiltroBanco()" [disabled]="loading">
+        Limpiar filtro
+      </ion-button>
+
+      <div class="rango-fechas ion-margin-top">
+        <div class="fecha-campo">
+          <ion-label>Desde</ion-label>
+          <ion-button expand="block" fill="outline" class="fecha-btn" (click)="abrirSelectorDesde()">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            {{ formatFechaVisual(fechaDesde) }}
+          </ion-button>
+        </div>
+
+        <div class="fecha-campo">
+          <ion-label>Hasta</ion-label>
+          <ion-button expand="block" fill="outline" class="fecha-btn" (click)="abrirSelectorHasta()">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            {{ formatFechaVisual(fechaHasta) }}
+          </ion-button>
+        </div>
+      </div>
+
+      <ion-button expand="block" fill="outline" color="medium" (click)="limpiarFiltroFechas()" [disabled]="loading">
+        Restablecer fechas
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-popover [isOpen]="mostrarDesdePicker" (didDismiss)="mostrarDesdePicker = false">
+    <ng-template>
+      <ion-datetime
+        presentation="date"
+        locale="es-HN"
+        [value]="fechaDesde"
+        [max]="fechaHasta || undefined"
+        (ionChange)="onFechaDesdeChange($event)"
+      ></ion-datetime>
+    </ng-template>
+  </ion-popover>
+
+  <ion-popover [isOpen]="mostrarHastaPicker" (didDismiss)="mostrarHastaPicker = false">
+    <ng-template>
+      <ion-datetime
+        presentation="date"
+        locale="es-HN"
+        [value]="fechaHasta"
+        [min]="fechaDesde || undefined"
+        (ionChange)="onFechaHastaChange($event)"
+      ></ion-datetime>
+    </ng-template>
+  </ion-popover>
+
+  <ion-card *ngIf="corte">
+    <ion-card-header>
+      <ion-card-title>Corte #{{ corte.id }}</ion-card-title>
+      <ion-card-subtitle>{{ fechasLocal.formatearFechaHora(corte.fechaCorte) }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-label>Depositos</ion-label>
+        <ion-note slot="end">{{ formatMoney(corte.totalDepositos) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Retiros</ion-label>
+        <ion-note slot="end">{{ formatMoney(corte.totalRetiros) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Remesas</ion-label>
+        <ion-note slot="end">{{ formatMoney(corte.totalRemesas) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Servicios</ion-label>
+        <ion-note slot="end">{{ formatMoney(corte.totalServicios) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Comisiones</ion-label>
+        <ion-note slot="end">{{ formatMoney(corte.totalComisiones) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Diferencia</ion-label>
+        <ion-note slot="end">{{ formatMoney(corte.diferencia) }}</ion-note>
+      </ion-item>
+      <ion-item lines="none" *ngIf="(corte.observacion || '').toLowerCase().includes('filtrado por banco:'); else observacionGeneral">
+        <ion-label>{{ corte.observacion }}</ion-label>
+      </ion-item>
+      <ng-template #observacionGeneral>
+        <ion-item lines="none">
+          <ion-label>Observacion</ion-label>
+          <ion-note slot="end">{{ corte.observacion || 'Sin observacion' }}</ion-note>
+        </ion-item>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!loading && !corte">
+    <ion-card-content>
+      No hay corte disponible. Cierra caja primero para generar uno.
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Cajas cerradas por rango</ion-card-title>
+      <ion-card-subtitle>
+        Mostrando {{ cajasFiltradas.length }} de {{ cajasCerradas.length }} cajas cerradas
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list *ngIf="cajasFiltradas.length > 0">
+        <ion-item *ngFor="let caja of cajasFiltradas">
+          <ion-label>
+            <h2>Caja #{{ caja.id }} - {{ caja.nombreCajero || 'Cajero' }}</h2>
+            <p>Cierre: {{ fechasLocal.formatearFechaHora(caja.fechaCierre || caja.fecha) }}</p>
+          </ion-label>
+          <ion-note slot="end">{{ formatMoney(caja.saldoFinal) }}</ion-note>
+        </ion-item>
+      </ion-list>
+      <ion-text color="medium" *ngIf="cajasFiltradas.length === 0">
+        No hay cajas cerradas en el rango seleccionado.
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

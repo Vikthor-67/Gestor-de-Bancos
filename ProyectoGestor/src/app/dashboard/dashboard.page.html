@@ -1,0 +1,282 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cargarDashboard()" [disabled]="loading">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-progress-bar *ngIf="loading" type="indeterminate" color="light"></ion-progress-bar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- ====== KPI CARDS ====== -->
+  <ion-grid class="kpi-grid">
+    <ion-row>
+      <ion-col size="12" sizeSm="4">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-icon"><ion-icon name="swap-horizontal-outline"></ion-icon></div>
+          <div class="kpi-body">
+            <div class="kpi-label">Transacciones acumuladas</div>
+            <div class="kpi-value">{{ resumen.totalTransacciones }}</div>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col size="12" sizeSm="4">
+        <div class="kpi-card kpi-green">
+          <div class="kpi-icon"><ion-icon name="cash-outline"></ion-icon></div>
+          <div class="kpi-body">
+            <div class="kpi-label">Monto del día</div>
+            <div class="kpi-value">{{ formatMoney(resumen.totalMonto) }}</div>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col size="12" sizeSm="4">
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-icon"><ion-icon name="trending-up-outline"></ion-icon></div>
+          <div class="kpi-body">
+            <div class="kpi-label">Comisiones acumuladas</div>
+            <div class="kpi-value">{{ formatMoney(resumen.totalComisiones) }}</div>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- ====== SALDOS EN TIEMPO REAL ====== -->
+  <ion-card class="section-card">
+    <ion-card-header class="card-header-accent">
+      <ion-card-title>
+        <ion-icon name="pulse-outline" class="card-title-icon"></ion-icon>
+        Saldos en tiempo real
+      </ion-card-title>
+      <ion-card-subtitle *ngIf="ultimaActualizacion">
+        Actualizado: {{ ultimaActualizacion }} · auto cada 15 seg
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" sizeSm="4">
+            <div class="saldo-metric">
+              <span class="saldo-label">Efectivo</span>
+              <span class="saldo-val">{{ formatMoney(resumenOperativo?.efectivoActual ?? 0) }}</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" sizeSm="4">
+            <div class="saldo-metric">
+              <span class="saldo-label">Total bancos</span>
+              <span class="saldo-val">{{ formatMoney(resumenOperativo?.montoBancosActual ?? 0) }}</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" sizeSm="4">
+            <div class="saldo-metric saldo-metric--highlight">
+              <span class="saldo-label">Monto general</span>
+              <span class="saldo-val">{{ formatMoney(resumenOperativo?.montoGeneral ?? 0) }}</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" sizeSm="6">
+            <div class="saldo-metric saldo-metric--success">
+              <span class="saldo-label">▲ Ingresos del día</span>
+              <span class="saldo-val saldo-val--success">{{ formatMoney(resumenOperativo?.totalIngresos ?? 0) }}</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" sizeSm="6">
+            <div class="saldo-metric saldo-metric--danger">
+              <span class="saldo-label">▼ Egresos del día</span>
+              <span class="saldo-val saldo-val--danger">{{ formatMoney(resumenOperativo?.totalEgresos ?? 0) }}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <div class="no-data" *ngIf="!resumenOperativo">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        Sin caja abierta o sin datos disponibles.
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ====== FILTROS + RESUMEN POR BANCO ====== -->
+  <ion-card class="section-card">
+    <ion-card-header class="card-header-accent">
+      <ion-card-title>
+        <ion-icon name="filter-outline" class="card-title-icon"></ion-icon>
+        Resumen por banco
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" sizeSm="6" sizeMd="3">
+            <ion-item class="filter-item" lines="none">
+              <ion-label position="stacked">Banco</ion-label>
+              <ion-select [(ngModel)]="filtroBancoId" interface="popover" placeholder="Todos">
+                <ion-select-option [value]="null">Todos</ion-select-option>
+                <ion-select-option *ngFor="let banco of bancos" [value]="banco.id">{{ banco.nombre }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" sizeSm="6" sizeMd="3">
+            <ion-item class="filter-item" lines="none">
+              <ion-label position="stacked">Tipo</ion-label>
+              <ion-select [(ngModel)]="filtroTipoTransId" interface="popover" placeholder="Todos">
+                <ion-select-option [value]="null">Todos</ion-select-option>
+                <ion-select-option *ngFor="let tipo of tiposTransaccion" [value]="tipo.id">{{ tipo.nombre }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" sizeSm="4" sizeMd="3">
+            <ion-item class="filter-item" lines="none">
+              <ion-label position="stacked">Desde</ion-label>
+              <ion-input type="date" [(ngModel)]="fechaInicio"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" sizeSm="4" sizeMd="2">
+            <ion-item class="filter-item" lines="none">
+              <ion-label position="stacked">Hasta</ion-label>
+              <ion-input type="date" [(ngModel)]="fechaFin"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-button expand="block" (click)="cargarDashboard()" [disabled]="loading" class="btn-apply">
+        <ion-icon name="search-outline" slot="start"></ion-icon>
+        Aplicar filtros
+      </ion-button>
+
+      <div class="banco-list" *ngIf="resumenBanco.length > 0">
+        <div class="banco-row" *ngFor="let item of resumenBanco">
+          <div class="banco-info">
+            <span class="banco-nombre">{{ item.banco }}</span>
+            <span class="banco-tipo" *ngIf="item.tipoTransaccion">{{ item.tipoTransaccion }}</span>
+            <small class="banco-trans">{{ item.totalTransacciones }} transacciones</small>
+          </div>
+          <div class="banco-amounts">
+            <span class="banco-monto">{{ formatMoney(item.totalMonto) }}</span>
+            <small class="banco-comis">Com: {{ formatMoney(item.totalComisiones) }}</small>
+          </div>
+        </div>
+      </div>
+      <div class="no-data" *ngIf="resumenBanco.length === 0">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        Sin transacciones para los filtros seleccionados.
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ====== COMISIONES KPI ====== -->
+  <ion-grid class="kpi-grid">
+    <ion-row>
+      <ion-col size="12" sizeSm="4">
+        <div class="kpi-card kpi-teal">
+          <div class="kpi-icon"><ion-icon name="today-outline"></ion-icon></div>
+          <div class="kpi-body">
+            <div class="kpi-label">Comisión diaria</div>
+            <div class="kpi-value">{{ formatMoney(metricasComisiones.totalComisionDiaria) }}</div>
+            <div class="kpi-sub">{{ formatMoney(metricasComisiones.totalMontoDiario) }} en monto</div>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col size="12" sizeSm="4">
+        <div class="kpi-card kpi-orange">
+          <div class="kpi-icon"><ion-icon name="calendar-outline"></ion-icon></div>
+          <div class="kpi-body">
+            <div class="kpi-label">Comisión mensual</div>
+            <div class="kpi-value">{{ formatMoney(metricasComisiones.totalComisionMensual) }}</div>
+            <div class="kpi-sub">{{ formatMoney(metricasComisiones.totalMontoMensual) }} en monto</div>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col size="12" sizeSm="4">
+        <div class="kpi-card kpi-indigo">
+          <div class="kpi-icon"><ion-icon name="analytics-outline"></ion-icon></div>
+          <div class="kpi-body">
+            <div class="kpi-label">Comisión acumulada</div>
+            <div class="kpi-value">{{ formatMoney(metricasComisiones.totalComisionHastaFecha) }}</div>
+            <div class="kpi-sub">{{ formatMoney(metricasComisiones.totalMontoHastaFecha) }} en monto</div>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- ====== GRAFICA CIRCULAR: TIPOS DE TRANSACCION ====== -->
+  <ion-card class="section-card">
+    <ion-card-header class="card-header-accent">
+      <ion-card-title>
+        <ion-icon name="pie-chart-outline" class="card-title-icon"></ion-icon>
+        Transacciones por tipo
+      </ion-card-title>
+      <ion-card-subtitle>{{ fechaInicio }} — {{ fechaFin }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ng-container *ngIf="datosPastelTipos.length > 0; else noTipos">
+        <div class="pie-layout">
+          <div class="pie-chart-wrap">
+            <div class="pie-chart" [style.background]="pastelBackgroundTipos">
+              <div class="pie-center">
+                <strong>{{ datosPastelTipos.length }}</strong>
+                <small>tipos</small>
+              </div>
+            </div>
+          </div>
+          <div class="pie-legend">
+            <div class="legend-item" *ngFor="let item of datosPastelTipos; let i = index">
+              <span class="legend-dot" [style.background]="colorItem(i)"></span>
+              <div class="legend-info">
+                <span class="legend-tipo">{{ item.tipo }}</span>
+                <span class="legend-txn">{{ item.transacciones }} txn · {{ porcentajeTipo(item) | number:'1.0-1' }}%</span>
+              </div>
+              <span class="legend-monto">{{ formatMoney(item.total) }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noTipos>
+        <div class="no-data">
+          <ion-icon name="pie-chart-outline"></ion-icon>
+          Sin datos para el período seleccionado.
+        </div>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ====== HISTORIAL DE CAJAS CERRADAS ====== -->
+  <ion-card class="section-card">
+    <ion-card-header class="card-header-accent">
+      <ion-card-title>
+        <ion-icon name="archive-outline" class="card-title-icon"></ion-icon>
+        Historial de cajas cerradas
+      </ion-card-title>
+      <ion-card-subtitle>{{ cajasCerradas.length }} registros</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content class="no-pad">
+      <div class="caja-row" *ngFor="let caja of cajasCerradas; let i = index">
+        <div class="caja-num" [style.background]="colorItem(i)">#{{ caja.id }}</div>
+        <div class="caja-data">
+          <span class="caja-cajero">{{ caja.nombreCajero || 'Cajero' }}</span>
+          <span class="caja-dates">
+            Apertura: {{ fechasLocal.formatearFechaHora(caja.fecha) }} |
+            Cierre: {{ fechasLocal.formatearFechaHora(caja.fechaCierre || caja.fecha) }}
+          </span>
+          <span class="caja-detail">
+            Inicial: {{ formatMoney(caja.saldoInicial) }} |
+            Ingresos: {{ formatMoney(caja.totalIngresos) }} |
+            Egresos: {{ formatMoney(caja.totalEgresos) }}
+          </span>
+        </div>
+        <div class="caja-saldo">{{ formatMoney(caja.saldoFinal) }}</div>
+      </div>
+      <div class="no-data" *ngIf="cajasCerradas.length === 0">
+        <ion-icon name="archive-outline"></ion-icon>
+        No hay cajas cerradas registradas.
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

@@ -1,0 +1,131 @@
+ion-content.usuarios-content {
+  --background: linear-gradient(135deg, #f4f8fc 0%, #f7fbff 100%);
+}
+
+ion-card.usuarios-card {
+  border-radius: 14px;
+  margin: 14px 12px;
+}
+
+.usuarios-lista {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.usuario-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.usuario-info {
+  min-width: 0;
+  width: 100%;
+}
+
+.usuario-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.usuario-actions ion-button {
+  margin: 0;
+  flex: 1 1 170px;
+  min-width: 0;
+}
+
+.usuario-info h2,
+.usuario-info p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  ion-card.usuarios-card {
+    margin: 10px 8px;
+  }
+
+  ion-card-header,
+  ion-card-content {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .usuarios-lista {
+    margin: 0;
+    width: 100%;
+  }
+
+  .usuario-card-item {
+    padding: 10px;
+    width: 100%;
+  }
+
+  .usuario-info {
+    width: 100%;
+  }
+
+  .usuario-info h2,
+  .usuario-info p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .usuario-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .usuario-actions ion-chip,
+  .usuario-actions ion-button {
+    width: 100%;
+  }
+
+  .usuario-actions ion-button {
+    min-height: 44px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    flex: 1 1 auto;
+    white-space: nowrap;
+    font-size: 14px !important;
+  }
+
+  .usuario-actions ion-button::part(native) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .usuario-actions ion-chip {
+    justify-content: center;
+  }
+
+  .usuario-info h2,
+  .usuario-info p,
+  ion-card-title,
+  ion-card-subtitle,
+  ion-label,
+  ion-input,
+  ion-select,
+  ion-button {
+    font-size: 15px !important;
+  }
+
+  ion-label[position='stacked'] {
+    font-size: 16px !important;
+    margin-bottom: 6px !important;
+  }
+}

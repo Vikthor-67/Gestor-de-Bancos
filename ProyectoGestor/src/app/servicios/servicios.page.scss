@@ -1,0 +1,32 @@
+ion-button.btn-solid-primary,
+ion-button.btn-solid-action {
+	--color: #ffffff;
+	--color-activated: #ffffff;
+	--color-focused: #ffffff;
+	font-weight: 700;
+}
+
+ion-button.btn-solid-primary {
+	--background: var(--ion-color-primary);
+	--background-hover: var(--ion-color-primary-shade);
+}
+
+ion-button.btn-solid-action {
+	--background: var(--ion-color-primary);
+	--background-hover: var(--ion-color-primary-shade);
+	margin-top: 8px;
+}
+
+ion-button.btn-solid-action[color="danger"] {
+	--background: var(--ion-color-danger);
+	--background-hover: var(--ion-color-danger-shade);
+}
+
+ion-button.btn-solid-action[color="success"] {
+	--background: var(--ion-color-success);
+	--background-hover: var(--ion-color-success-shade);
+}
+
+ion-button[fill="outline"] {
+	--color: var(--ion-color-medium-shade);
+}

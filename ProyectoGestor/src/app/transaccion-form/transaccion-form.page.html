@@ -1,0 +1,117 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Nueva Transaccion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Banco</ion-label>
+      <ion-select [(ngModel)]="form.idBanco" interface="popover" (ionChange)="onDatosComisionChange()">
+        <ion-select-option *ngFor="let banco of bancos" [value]="banco.id">{{ banco.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Tipo de transaccion</ion-label>
+      <ion-select [(ngModel)]="form.idTipoTrans" interface="popover" (ionChange)="onTipoTransaccionChange()">
+        <ion-select-option *ngFor="let tipo of tiposTransaccion" [value]="tipo.id">{{ tipo.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Servicio</ion-label>
+      <ion-select
+        [(ngModel)]="form.idServicio"
+        interface="popover"
+        [disabled]="!puedeSeleccionarServicio"
+      >
+        <ion-select-option [value]="null">Seleccionar servicio</ion-select-option>
+        <ion-select-option *ngFor="let servicio of serviciosFiltrados" [value]="servicio.id">
+          {{ servicio.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+      <ion-item *ngIf="esTransferencia">
+        <ion-label position="stacked">Banco destino</ion-label>
+        <ion-select [(ngModel)]="form.idBancoOrigen" interface="popover">
+          <ion-select-option *ngFor="let banco of bancos" [value]="banco.id">{{ banco.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="esTransferencia">
+        <ion-label position="stacked">Cuenta destino</ion-label>
+        <ion-input [(ngModel)]="form.cuentaDestino" placeholder="Número de cuenta destino"></ion-input>
+      </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Referencia</ion-label>
+      <ion-input [(ngModel)]="form.numeroReferencia" readonly="true"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Nombre del cliente (opcional)</ion-label>
+      <ion-input [(ngModel)]="form.nombreCliente"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Monto (HNL)</ion-label>
+      <ion-input
+        type="text"
+        inputmode="decimal"
+        [ngModel]="form.monto"
+        (ngModelChange)="onMontoInput($event)"
+        appMoneyInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Comision (HNL)</ion-label>
+      <ion-input type="text" [value]="formatMoneyInput(form.comision)" readonly="true"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Observacion</ion-label>
+      <ion-textarea [(ngModel)]="form.observacion"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Geolocalizacion (obligatoria)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Latitud: {{ latitud || 'No disponible' }}</p>
+      <p>Longitud: {{ longitud || 'No disponible' }}</p>
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="capturarUbicacion()"
+        [disabled]="ubicacionLoading"
+      >
+        {{ ubicacionLoading ? 'Obteniendo ubicacion...' : 'Obtener ubicacion' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Comprobante</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" fill="outline" (click)="tomarFoto()" [disabled]="fotoLoading">
+        {{ fotoLoading ? 'Abriendo camara/galeria...' : 'Tomar o seleccionar foto' }}
+      </ion-button>
+      <img *ngIf="fotoComprobante" [src]="fotoComprobante" alt="Comprobante" class="preview" />
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" class="ion-margin" (click)="guardar()" [disabled]="loading">
+    {{ loading ? 'Guardando...' : 'Guardar transaccion' }}
+  </ion-button>
+</ion-content>
